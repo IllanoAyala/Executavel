@@ -17,66 +17,120 @@ bool is64Bit() {
     #endif
 }
 
+
+bool verificaConexaoInternet() {
+    #ifdef _WIN32
+        const char* comandoPing = "ping -n 1 www.google.com > nul";
+    #else
+        const char* comandoPing = "ping -c 1 www.google.com > /dev/null 2>&1";
+    #endif
+
+    int resultado = std::system(comandoPing);
+
+    return resultado == 0;
+}
+
+bool isPythonInstalled() {
+    FILE* pipe = _popen("python --version 2>&1", "r");
+    if (!pipe) return false;
+
+    char buffer[128];
+    std::string result = "";
+
+    while (!feof(pipe)) {
+        if (fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    }
+
+    _pclose(pipe);
+
+    // Verifica se a string contém a versão do Python
+    return result.find("Python") != std::string::npos;
+}
+
+bool fileOrDirectoryExists(const std::string& path) {
+    DWORD fileAttributes = GetFileAttributesA(path.c_str());
+
+    return (fileAttributes != INVALID_FILE_ATTRIBUTES &&
+            (fileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
+}
+
+
 int main() {
-    // 1. Verificar se o arquivo já foi baixado
-    const char* repoUrl = "https://github.com/projetomymaker/DB4K/archive/main.tar.gz";
-    if (!fileExists("DB4K-main.tar.gz")) {
-        int downloadResult = std::system(("curl -LJO " + std::string(repoUrl)).c_str());
 
-        if (downloadResult != 0) {
-            std::cerr << "Erro ao baixar o arquivo.\n";
-            return 1;
-        }
-    } else {
-        std::cout << "Arquivo já baixado. Pulando a etapa de download.\n";
-    }
+    if(verificaConexaoInternet()){
+        // 1. Verificar se o arquivo já foi baixado
+        const char* repoUrl = "https://github.com/projetomymaker/DB4K/archive/main.tar.gz";
+        if (!fileExists("DB4K-main.tar.gz")) {
+            int downloadResult = std::system(("curl -LJO " + std::string(repoUrl)).c_str());
 
-    // 2. Verificar se o Python já está instalado
-    if (system("python --version") != 0) {
-        std::cout << "Python não encontrado.\n";
-
-        const char* pythonUrl = is64Bit() ? "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi" : "https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi";
-
-        int installPythonResult = std::system(("curl -LJO " + std::string(pythonUrl)).c_str());
-
-        if (installPythonResult != 0) {
-            std::cerr << "Erro ao instalar o Python.\n";
-            return 1;
+            if (downloadResult != 0) {
+                std::cerr << "erro ao baixar o arquivo.\n";
+                return 1;
+            }
+        } else {
+            std::cout << "arquivo baixado. pulando a etapa de download.\n";
         }
 
-        std::string pythonInstaller = is64Bit() ? "python-2.7.9.amd64.msi" : "python-2.7.9.msi";
-        int runInstallerResult = std::system(pythonInstaller.c_str());
+        // 2. Verificar se o Python já está instalado
+        if (!isPythonInstalled()) {
+            std::cout << "python not found.\n";
 
-        if (runInstallerResult != 0) {
-            std::cerr << "Erro ao executar o instalador do Python.\n";
-            return 1;
+            const char* pythonUrl = is64Bit() ? "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi" : "https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi";
+
+            int installPythonResult = std::system(("curl -LJO " + std::string(pythonUrl)).c_str());
+
+            if (installPythonResult != 0) {
+                std::cerr << "erro ao instalar o python.\n";
+                return 1;
+            }
+
+            std::string pythonInstaller = is64Bit() ? "python-2.7.9.amd64.msi" : "python-2.7.9.msi";
+            int runInstallerResult = std::system(pythonInstaller.c_str());
+
+            if (runInstallerResult != 0) {
+                std::cerr << "erro ao executar o instalador do python.\n";
+                return 1;
+            }
+
+            std::cout << "python instalado com sucesso.\n";
+
+        } else {
+            std::cout << "python já instalado. pulando a etapa de instalação do python.\n";
         }
 
-        std::cout << "Python instalado com sucesso.\n";
+        const std::string DB4K_main = "./DB4K-main";
 
-    } else {
-        std::cout << "Python já instalado. Pulando a etapa de instalação do Python.\n";
-    }
+        // 3. Verificar se a pasta já foi descompactada
+        if (!fileOrDirectoryExists(DB4K_main)) {
+            int unzipResult = std::system("tar -xzf ./DB4K-main.tar.gz");
 
-    // 3. Verificar se a pasta já foi descompactada
-    if (!fileExists("./DB4K-main")) {
-        int unzipResult = std::system("tar -xzf ./DB4K-main.tar.gz");
+            if (unzipResult != 0) {
+                std::cerr << "erro ao descompactar a pasta.\n";
+                return 1;
+            }
+        } else {
+            std::cout << "pasta ja descompactada. pulando a etapa de descompactação.\n";
+        }
 
-        if (unzipResult != 0) {
-            std::cerr << "Erro ao descompactar a pasta.\n";
+        // 4. Inicia o Start.py
+        int runPythonResult = std::system("start ./DB4K-main/start.py");
+
+        if (runPythonResult != 0) {
+            std::cerr << "erro ao executar o script Python.\n";
             return 1;
         }
-    } else {
-        std::cout << "Pasta já descompactada. Pulando a etapa de descompactação.\n";
+    }
+    else{
+        int installOff = std::system("installoffline.exe");
+
+        if (installOff == 0) {
+            std::cout << "programa executado com sucesso.\n";
+        } else {
+            std::cerr << "erro ao executar o programa.\n";
+        }
     }
 
-    // 4. Inicia o Start.py
-    int runPythonResult = std::system("start ./DB4K-main/start.py");
-
-    if (runPythonResult != 0) {
-        std::cerr << "Erro ao executar o script Python.\n";
-        return 1;
-    }
 
     return 0;
 }
