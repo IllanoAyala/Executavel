@@ -96,7 +96,7 @@ int main() {
             std::cout << "python instalado com sucesso.\n";
 
         } else {
-            std::cout << "python já instalado. pulando a etapa de instalação do python.\n";
+            std::cout << "python ja instalado. pulando a etapa de instalação do python.\n";
         }
 
         const std::string DB4K_main = "./DB4K-main";

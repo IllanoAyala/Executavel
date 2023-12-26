@@ -44,32 +44,32 @@ int main() {
             return 1;
         }
     } else {
-        std::cout << "pasta já descompactada. Pulando a etapa de descompactação.\n";
+        std::cout << "pasta ja descompactada. pulando a etapa de descompactação.\n";
     }
 
     // 2. Verificar se o Python já está instalado
     if (!isPythonInstalled()) {
-        std::cout << "Python não encontrado.\n";
+        std::cout << "python nao encontrado.\n";
 
         const char* pythonInstaller = is64Bit() ? "./install-offline/python64.msi" : "./install-offline/python86.msi";
         
         int installPythonResult = std::system(pythonInstaller);
 
         if (installPythonResult != 0) {
-            std::cerr << "Erro ao instalar o Python.\n";
+            std::cerr << "erro ao instalar o python.\n";
             return 1;
         }
 
-        std::cout << "Python instalado com sucesso.\n";
+        std::cout << "python instalado com sucesso.\n";
     } else {
-        std::cout << "Python já instalado. Pulando a etapa de instalação do Python.\n";
+        std::cout << "python ja instalado. pulando a etapa de instalação do Python.\n";
     }
 
     // 3. Iniciar o Start.py
     int runPythonResult = std::system("start ./DB4K-main/start.py");
 
     if (runPythonResult != 0) {
-        std::cerr << "Erro ao executar o script Python.\n";
+        std::cerr << "erro ao executar o script python.\n";
         return 1;
     }
 
