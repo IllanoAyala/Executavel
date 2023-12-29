@@ -48,6 +48,18 @@ bool isPythonInstalled() {
     return result.find("Python") != std::string::npos;
 }
 
+bool isArduinoInstalled() {
+    HKEY hKey;
+    const char* regPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Arduino";
+
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, regPath, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        RegCloseKey(hKey);
+        return true;
+    }
+
+    return false;
+}
+
 bool fileOrDirectoryExists(const std::string& path) {
     DWORD fileAttributes = GetFileAttributesA(path.c_str());
 
@@ -113,7 +125,24 @@ int main() {
             std::cout << "pasta ja descompactada. pulando a etapa de descompactação.\n";
         }
 
-        // 4. Inicia o Start.py
+
+        // 4. Verificar se o Arduino IDE está instalado
+        const char* arduinoExePath = "arduino.exe";
+
+        if (isArduinoInstalled()) {
+            std::cout << "arduino IDE ja instalado. pulando a etapa da instalação do arduino IDE.\n";
+        } else {
+            std::cout << "arduino IDE nao encontrado\n";
+
+            if (system("arduino.exe") == 0) {
+                std::cout << "arduino IDE instalado com sucesso.\n";
+            } else {
+                std::cerr << "erro ao instalar arduino IDE.\n";
+                return 1;
+            }
+        }
+
+        // 5. Inicia o Start.py
         int runPythonResult = std::system("start ./DB4K-main/start.py");
 
         if (runPythonResult != 0) {

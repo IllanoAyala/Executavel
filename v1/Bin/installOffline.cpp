@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <shlobj.h>
 #include <fstream>
+#include <windows.h>
+
 
 bool is64Bit() {
     #ifdef _WIN64
@@ -32,6 +34,18 @@ bool isPythonInstalled() {
 
     // Verifica se a string contém a versão do Python
     return result.find("Python") != std::string::npos;
+}
+
+bool isArduinoInstalled() {
+    HKEY hKey;
+    const char* regPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Arduino";
+
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, regPath, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        RegCloseKey(hKey);
+        return true;
+    }
+
+    return false;
 }
 
 int main() {
@@ -65,7 +79,24 @@ int main() {
         std::cout << "python ja instalado. pulando a etapa de instalação do Python.\n";
     }
 
-    // 3. Iniciar o Start.py
+
+    // 3. Verificar se o Arduino IDE está instalado
+    const char* arduinoExePath = "arduino.exe";
+
+    if (isArduinoInstalled()) {
+        std::cout << "arduino IDE ja instalado. pulando a etapa da instalação do arduino IDE.\n";
+    } else {
+        std::cout << "arduino IDE nao encontrado\n";
+
+        if (system("arduino.exe") == 0) {
+            std::cout << "arduino IDE instalado com sucesso.\n";
+        } else {
+            std::cerr << "erro ao instalar arduino IDE.\n";
+            return 1;
+        }
+    }
+    
+    // 4. Iniciar o Start.py
     int runPythonResult = std::system("start ./DB4K-main/start.py");
 
     if (runPythonResult != 0) {
@@ -74,4 +105,5 @@ int main() {
     }
 
     return 0;
+    
 }
