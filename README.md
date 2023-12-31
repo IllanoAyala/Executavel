@@ -8,6 +8,8 @@ MyMaker.exe é um executável para o projeto MyMaker, que tem como intuito ensin
 
 ![Vídeo sem título ‐ Feito com o Clipchamp](https://github.com/IllanoAyala/Executavel/assets/92798837/30550060-546d-4646-8fd3-541b5b4a5ca3)
 
+`(Já tenho tudo instalado então foi bem rapído, mas na primeira vez demorará um pouco)`
+
 
 
 ## Aprendizados
