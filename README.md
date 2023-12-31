@@ -14,6 +14,4 @@ MyMaker.exe é um executável para o projeto MyMaker, que tem como intuito ensin
 
 ## Aprendizados
 
-O que você aprendeu construindo esse projeto? Quais desafios você enfrentou e como você superou-os?
-
 Durante a construção desse projeto eu enfrentei muitos desafios uma vez que encontrei pouca documentação na internet para me auxiliar na tarefa. Desse modo, essa foi a minha primeira vez construindo um executável, então eu não sabia muito bem como começar.
