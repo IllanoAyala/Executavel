@@ -30,8 +30,10 @@ bool is64Bit() {
 //     return resultado == 0;
 // }
 
+const char* pythonCommand = "python --version";
+
 bool isPythonInstalled() {
-    FILE* pipe = _popen("python --version 2>&1", "r");
+    FILE* pipe = _popen(pythonCommand, "r");
     if (!pipe) return false;
 
     char buffer[128];
@@ -44,7 +46,6 @@ bool isPythonInstalled() {
 
     _pclose(pipe);
 
-    // Verifica se a string contém a versão do Python
     return result.find("Python") != std::string::npos;
 }
 
@@ -86,27 +87,18 @@ int main() {
 
         // 2. Verificar se o Python já está instalado
         if (!isPythonInstalled()) {
-            std::cout << "python not found.\n";
+        std::cout << "python nao encontrado.\n";
 
-            const char* pythonUrl = is64Bit() ? "https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi" : "https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi";
+        const char* pythonInstaller = is64Bit() ? "install-offline\\python64.msi" : "install-offline\\python86.msi";
+        
+        int installPythonResult = std::system(pythonInstaller);
 
-            int installPythonResult = std::system(("curl -LJO " + std::string(pythonUrl)).c_str());
+        if (installPythonResult != 0) {
+            std::cerr << "erro ao instalar o python.\n";
+            return 1;
+        }
 
-            if (installPythonResult != 0) {
-                std::cerr << "erro ao instalar o python.\n";
-                return 1;
-            }
-
-            std::string pythonInstaller = is64Bit() ? "python-2.7.9.amd64.msi" : "python-2.7.9.msi";
-            int runInstallerResult = std::system(pythonInstaller.c_str());
-
-            if (runInstallerResult != 0) {
-                std::cerr << "erro ao executar o instalador do python.\n";
-                return 1;
-            }
-
-            std::cout << "python instalado com sucesso.\n";
-
+        std::cout << "python instalado com sucesso.\n";
         } else {
             std::cout << "python ja instalado. pulando a etapa de instalação do python.\n";
         }
@@ -122,7 +114,7 @@ int main() {
                 return 1;
             }
         } else {
-            std::cout << "pasta ja descompactada. pulando a etapa de descompactação.\n";
+            std::cout << "pasta ja descompactada. pulando a etapa de descompactacao.\n";
         }
 
 
@@ -130,7 +122,7 @@ int main() {
         const char* arduinoExePath = "arduino.exe";
 
         if (isArduinoInstalled()) {
-            std::cout << "arduino IDE ja instalado. pulando a etapa da instalação do arduino IDE.\n";
+            std::cout << "arduino IDE ja instalado. pulando a etapa da instalacao do arduino IDE.\n";
         } else {
             std::cout << "arduino IDE nao encontrado\n";
 

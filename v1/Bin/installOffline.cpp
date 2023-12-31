@@ -18,8 +18,10 @@ bool fileExists(const std::string& filename) {
     return file.good();
 }
 
+const char* pythonCommand = "python --version";
+
 bool isPythonInstalled() {
-    FILE* pipe = _popen("python --version 2>&1", "r");
+    FILE* pipe = _popen(pythonCommand, "r");
     if (!pipe) return false;
 
     char buffer[128];
@@ -32,7 +34,6 @@ bool isPythonInstalled() {
 
     _pclose(pipe);
 
-    // Verifica se a string contém a versão do Python
     return result.find("Python") != std::string::npos;
 }
 
@@ -66,12 +67,13 @@ int main() {
     if (!isPythonInstalled()) {
         std::cout << "python nao encontrado.\n";
 
-        const char* pythonInstaller = is64Bit() ? "Bin/install-offline/python64.msi" : "Bin/install-offline/python86.msi";
+        const char* pythonInstaller = is64Bit() ? "install-offline\\python64.msi" : "install-offline\\python86.msi";
         
         int installPythonResult = std::system(pythonInstaller);
 
         if (installPythonResult != 0) {
             std::cerr << "erro ao instalar o python.\n";
+            system("pause");
             return 1;
         }
 
