@@ -55,6 +55,7 @@ int main() {
 
         if (unzipResult != 0) {
             std::cerr << "erro ao descompactar a pasta.\n";
+            system("pause");
             return 1;
         }
     } else {
@@ -65,7 +66,7 @@ int main() {
     if (!isPythonInstalled()) {
         std::cout << "python nao encontrado.\n";
 
-        const char* pythonInstaller = is64Bit() ? "./install-offline/python64.msi" : "./install-offline/python86.msi";
+        const char* pythonInstaller = is64Bit() ? "Bin/install-offline/python64.msi" : "Bin/install-offline/python86.msi";
         
         int installPythonResult = std::system(pythonInstaller);
 
@@ -81,14 +82,14 @@ int main() {
 
 
     // 3. Verificar se o Arduino IDE está instalado
-    const char* arduinoExePath = "arduino.exe";
+    const char* arduinoExePath = "Bin\\arduino.exe";
 
     if (isArduinoInstalled()) {
         std::cout << "arduino IDE ja instalado. pulando a etapa da instalação do arduino IDE.\n";
     } else {
         std::cout << "arduino IDE nao encontrado\n";
 
-        if (system("arduino.exe") == 0) {
+        if (system(arduinoExePath) == 0) {
             std::cout << "arduino IDE instalado com sucesso.\n";
         } else {
             std::cerr << "erro ao instalar arduino IDE.\n";

@@ -18,17 +18,17 @@ bool is64Bit() {
 }
 
 
-bool verificaConexaoInternet() {
-    #ifdef _WIN32
-        const char* comandoPing = "ping -n 1 www.google.com > nul";
-    #else
-        const char* comandoPing = "ping -c 1 www.google.com > /dev/null 2>&1";
-    #endif
+// bool verificaConexaoInternet() {
+//     #ifdef _WIN32
+//         const char* comandoPing = "ping -n 1 www.google.com > nul";
+//     #else
+//         const char* comandoPing = "ping -c 1 www.google.com > /dev/null 2>&1";
+//     #endif
 
-    int resultado = std::system(comandoPing);
+//     int resultado = std::system(comandoPing);
 
-    return resultado == 0;
-}
+//     return resultado == 0;
+// }
 
 bool isPythonInstalled() {
     FILE* pipe = _popen("python --version 2>&1", "r");
@@ -70,7 +70,7 @@ bool fileOrDirectoryExists(const std::string& path) {
 
 int main() {
 
-    if(verificaConexaoInternet()){
+    // if(verificaConexaoInternet()){
         // 1. Verificar se o arquivo já foi baixado
         const char* repoUrl = "https://github.com/projetomymaker/DB4K/archive/main.tar.gz";
         if (!fileExists("DB4K-main.tar.gz")) {
@@ -149,16 +149,16 @@ int main() {
             std::cerr << "erro ao executar o script Python.\n";
             return 1;
         }
-    }
-    else{
-        int installOff = std::system("installoffline.exe");
+    // }
+    // else{
+    //     int installOff = std::system("installoffline.exe");
 
-        if (installOff == 0) {
-            std::cout << "programa executado com sucesso.\n";
-        } else {
-            std::cerr << "erro ao executar o programa.\n";
-        }
-    }
+    //     if (installOff == 0) {
+    //         std::cout << "programa executado com sucesso.\n";
+    //     } else {
+    //         std::cerr << "erro ao executar o programa.\n";
+    //     }
+    // }
 
 
     return 0;
