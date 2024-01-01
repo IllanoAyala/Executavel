@@ -16,7 +16,7 @@ int main() {
     size_t pos = diretorioAtual.find_last_of("\\");
     diretorioAtual = diretorioAtual.substr(0, pos + 1);
 
-    std::string nomeArquivo = diretorioAtual + "flag.txt";
+    std::string nomeArquivo = diretorioAtual + "flag.dat";
 
     if (std::ifstream(nomeArquivo)) {
         int runPythonResult = std::system("start ./DB4K-main/start.py");

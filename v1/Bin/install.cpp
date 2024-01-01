@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <shlobj.h>
 #include <fstream>
+#include <windows.h>
 
 
 bool fileExists(const std::string& filename) {
@@ -119,14 +120,14 @@ int main() {
 
 
         // 4. Verificar se o Arduino IDE está instalado
-        const char* arduinoExePath = "arduino.exe";
+        const char* arduinoExePath = "Bin\\arduino.exe";
 
         if (isArduinoInstalled()) {
-            std::cout << "arduino IDE ja instalado. pulando a etapa da instalacao do arduino IDE.\n";
+            std::cout << "arduino IDE ja instalado. pulando a etapa da instalação do arduino IDE.\n";
         } else {
             std::cout << "arduino IDE nao encontrado\n";
 
-            if (system("arduino.exe") == 0) {
+            if (system(arduinoExePath) == 0) {
                 std::cout << "arduino IDE instalado com sucesso.\n";
             } else {
                 std::cerr << "erro ao instalar arduino IDE.\n";
